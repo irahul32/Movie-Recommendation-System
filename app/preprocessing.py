@@ -41,7 +41,7 @@ def load_data():
     movies_df = movies[['movie_id','title','overview','genres','keywords','cast','crew']]
     
     #Handling missing values
-    movies_df.dropna(inplace=True)
+    movies_df=movies_df.dropna()
 
     return movies_df
 
@@ -98,7 +98,7 @@ def prepare_data(movies_df):
 
     #Combine features into a single 'tags' column
     movies_df['tags'] = movies_df['overview'] + movies_df['genres'] + movies_df['keywords'] +       movies_df['cast'] + movies_df['crew']
-    movies_df['tags'] = movies_df['tags'].apply(lamda x:" ".join(x).lower())
+    movies_df['tags'] = movies_df['tags'].apply(lambda x: " ".join(x).lower())
 
     #Apply Stemming
     movies_df['tags'] = movies_df['tags'].apply(stem_text)
@@ -109,7 +109,7 @@ def vectorize_data(new_df):
     """Vectorize the 'tags' column and compute similarity."""
     tf = TfidfVectorizer(max_features=5000,stop_words='english')
     vectors=tf.fit_transform(new_df['tags']).toarray()
-    return movies,vectors
+    return new_df,vectors
 
 def preprocess_pipeline():
     """Full preprocessing pipeline"""

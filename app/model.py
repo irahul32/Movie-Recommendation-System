@@ -1,20 +1,28 @@
 import os
 import sys
+import numpy as np
 from preprocessing import preprocess_pipeline
 from sklearn.neighbors import NearestNeighbors
+from joblib import dump, load
 
 # Add the directory containing this script to the Python path
 #CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
 #sys.path.append(CURRENT_DIR)
 
-#Load preprocessed data and vectors
-new_df,vectors = preprocess_pipeline()
+def train_and_save_model(model_path, data_path,vector_path):
+    """Trains the model and saves it to the specified path."""
+    new_df, vectors = preprocess_pipeline()
 
-#Initialize and fit the NearestNeighbors model
-model  = NearestNeighbors(metric='cosine')   #gives the cosine similarity
-model.fit(vectors)
+    # Initialize and fit the Nearest Neighbors model
+    model = NearestNeighbors(metric='cosine')
+    model.fit(vectors)
 
-def recommend(movie):
+    # Save the model
+    dump(model, model_path)
+    dump(new_df, data_path)
+    np.save(vector_path, vectors)
+
+def recommend(model_path, data_path, vector_path, movie):
     """
     Recommend movies similar to the given movie using Nearest Neighbors.
     Args:
@@ -22,6 +30,10 @@ def recommend(movie):
     Returns:
         List[str]: Titles of the recommended movies.
     """
+    model = load(model_path)
+    new_df = load(data_path)
+    vectors = np.load(vector_path)
+
     try:
         movie_index = new_df[new_df['title'].str.lower() == movie.lower()].index[0]
     except IndexError:
@@ -37,9 +49,15 @@ def recommend(movie):
 
 # Example usage
 if __name__ == "__main__":
+    model_path = "models/knn_model.joblib"
+    data_path = "dataset/preprocessed_data.pkl"
+    vector_path = "dataset/vectors.npy"
+    train_and_save_model(model_path, data_path, vector_path)
+    print("Model trained and saved.")
+    
     # Test the recommendation system
     test_movie = "Avatar"  # Replace with any movie title from the dataset
-    recommendations = recommend(test_movie)
+    recommendations = recommend(model_path, data_path, vector_path, test_movie)
     print(f"Recommendations for '{test_movie}':")
     for movie in recommendations:
         print(movie)

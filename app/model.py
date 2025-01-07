@@ -49,8 +49,8 @@ def recommend(model_path, data_path, vector_path, movie):
 
 # Example usage
 if __name__ == "__main__":
-    model_path = "models/knn_model.joblib"
-    data_path = "Dataset/preprocessed_data.pkl"
+    model_path = "model/knn_model.joblib"
+    data_path = "Dataset/preprocessed_data.joblib"
     vector_path = "vector/vectors.npy"
 
     train_and_save_model(model_path, data_path, vector_path)

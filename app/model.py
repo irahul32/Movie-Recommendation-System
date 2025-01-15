@@ -11,6 +11,12 @@ from joblib import load, dump
 
 def train_and_save_model(model_path, data_path, vector_path):
     """Trains the model and saves it to the specified path."""
+    
+    # Create directories if they don't exist
+    os.makedirs(os.path.dirname(model_path), exist_ok=True)
+    os.makedirs(os.path.dirname(data_path), exist_ok=True)
+    os.makedirs(os.path.dirname(vector_path), exist_ok=True)
+    
     new_df, vectors = preprocess_pipeline()
 
     # Initialize and fit the Nearest Neighbors model

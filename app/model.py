@@ -12,6 +12,11 @@ from joblib import load, dump
 def train_and_save_model(model_path, data_path, vector_path):
     """Trains the model and saves it to the specified path."""
     
+    # Check if the model, data, and vectors already exist
+    if os.path.exists(model_path) and os.path.exists(data_path) and os.path.exists(vector_path):
+        print("Model and data already exist. Skipping training.")
+        return
+
     # Create directories if they don't exist
     os.makedirs(os.path.dirname(model_path), exist_ok=True)
     os.makedirs(os.path.dirname(data_path), exist_ok=True)
@@ -55,9 +60,10 @@ def recommend(model_path, data_path, vector_path, movie):
 
 # Example usage
 if __name__ == "__main__":
-    model_path = "model/knn_model.joblib"
-    data_path = "Dataset/preprocessed_data.joblib"
-    vector_path = "vector/vectors.npy"
+    base_dir=os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model_path = os.path.join(base_dir,"model/knn_model.joblib")
+    data_path = os.path.join(base_dir,"Dataset/preprocessed_data.joblib")
+    vector_path = os.path.join(base_dir,"vector/vectors.npy")
 
     train_and_save_model(model_path, data_path, vector_path)
     print("Model trained and saved.")
